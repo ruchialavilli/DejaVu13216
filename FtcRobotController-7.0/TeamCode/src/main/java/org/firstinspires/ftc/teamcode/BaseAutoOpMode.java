@@ -19,7 +19,7 @@ public class BaseAutoOpMode extends LinearOpMode {
     private Orientation lastAngles = new Orientation();
     private double currAngle = 0.0;
     private int allowedAngleDiff = 1;
-    DejaVuBot robot = new DejaVuBot();
+    DejaVuBot robot;
 
     public double getAbsoluteAngle() {
         return robot.imu.getAngularOrientation(
@@ -32,6 +32,7 @@ public class BaseAutoOpMode extends LinearOpMode {
     }
 
     public void turnToPID(double targetAngle, DejaVuBot bot) {
+        robot = bot;
         bot.gyroInit();
         bot.chassisEncoderOff();
         if(targetAngle < 0){
@@ -40,12 +41,14 @@ public class BaseAutoOpMode extends LinearOpMode {
             PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
             telemetry.setMsTransmissionInterval(50);
             // Checking lastSlope to make sure that it's not "oscillating" when it quits
-            telemetry.addData(" turnToPID start abs angle = ", getAbsoluteAngle());
-            telemetry.addData(" turnToPID start diff = ", Math.abs(targetAngle - Math.abs(getAbsoluteAngle())));
+            double absoluteAngle = getAbsoluteAngle();
+            telemetry.addData(" turnToPID start abs angle = ", absoluteAngle);
+            telemetry.addData(" turnToPID start diff = ", Math.abs(targetAngle - Math.abs(absoluteAngle)));
             telemetry.addData(" turnToPID start slope = ", pid.getLastSlope());
             telemetry.update();
-
-            while (opModeIsActive() && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) > allowedAngleDiff || pid.getLastSlope() > 0.75)) {
+            while (opModeIsActive()
+                    && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) > allowedAngleDiff
+                        || pid.getLastSlope() > 0.75)) {
                 double motorPower = pid.update(getAbsoluteAngle());
 
                 bot.leftFrontMotor.setPower(-motorPower);
@@ -83,6 +86,7 @@ public class BaseAutoOpMode extends LinearOpMode {
             telemetry.addData("right", bot.rightFrontMotor.getCurrentPosition());
             telemetry.update();
         }
+        telemetry.addLine("Done moving....");
     }
 
     @Override

@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.DejaVuBot;
 /**
  * This class represents the autonomous run from Red1 position
  */
-@Autonomous(name="AutoRed2VisionOpMode", group="AutoOpModes")
-public class AutoRed2VisionOpMode extends BaseAutoVisionOpMode {
-    private String TAG = "AutoRed2VisionOpMode";
+@Autonomous(name="AutoRed1VisionOpMode", group="AutoOpModes")
+public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
+    private String TAG = "AutoRed1VisionOpMode";
     private ElapsedTime runtime = new ElapsedTime();
     DejaVuBot robot = new DejaVuBot();
 
@@ -34,65 +34,85 @@ public class AutoRed2VisionOpMode extends BaseAutoVisionOpMode {
          **/
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.8, 16.0/9.0);
         }
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
         waitForStart();
-        driveForwardByInches(4, robot, DejaVuBot.TPS);
+        //driveForwardByInches(4, robot, DejaVuBot.TPS);
         //Find the level in 10 attempts. If not detected set level to 3.
         if (opModeIsActive() && tfod != null) {
             telemetry.addData(">", "Detecting level using vision");
             telemetry.update();
             int count = 0;
-            while (opModeIsActive() && count < 10) {
+            int lastResult = -1;
+            while (opModeIsActive() && count < 3) {
+                lastResult = currentLevel;
                 currentLevel = findLevel();
-                Log.i(TAG, "Called find level for "+ count+ " detected current level ="+ currentLevel);
+                telemetry.addData("Last Level", lastResult);
+                telemetry.addData("Current Level", currentLevel);
+                Log.i(TAG, "Called find level for "
+                        + count+ " detected current level = "
+                        + currentLevel + " (last level=" + lastResult + ")");
                 if(currentLevel != -1){
                     Log.i(TAG, " Setting Final level ="+ currentLevel);
-                    break;
+                }
+                // go back to last result if current result is not good
+                if(lastResult != -1){
+                    Log.i(TAG, " Setting Final level ="+ lastResult);
+                    currentLevel = lastResult;
                 }
                 count++;
                 Log.i(TAG, " count ="+ count);
-                sleep(300);
+                telemetry.addData("Retry count:", count);
             }
 
-            telemetry.addData(" Current level discovered is =", currentLevel);
+            if(currentLevel == DejaVuArm.BOTTOM_LEVEL) {
+                telemetry.addLine(" Current level discovered is Bottom level");
+            } else if(currentLevel == DejaVuArm.TOP_LEVEL) {
+                telemetry.addLine(" Current level discovered is Top level");
+            } else if(currentLevel == DejaVuArm.MID_LEVEL) {
+                telemetry.addLine(" Current level discovered is Mid level");
+            } else {
+                telemetry.addLine(" Current level discovered is UNKNOWN - defaulting to TOP");
+                currentLevel = DejaVuArm.TOP_LEVEL;
+            }
             telemetry.update();
         }else{
-            telemetry.addData(">", "Could not init vision code.");
+            telemetry.addData(">", "Could not init vision code - defaulting to TOP");
             telemetry.update();
+            currentLevel = DejaVuArm.TOP_LEVEL;
         }
         //46
         driveForwardByInches(38, robot, DejaVuBot.TPS);
         turnToPID(90,robot);
-        telemetry.addData("name", "Turned to hub  ");
-        telemetry.update();
+       telemetry.addLine("Turned 90 degrees to align");
+       //telemetry.update();
         driveForwardByInches(-2, robot, DejaVuBot.TPS);
 
         robot.arm.moveArmToLevel(currentLevel);
         sleep(500);
-        //robot.arm.openBucketPos();
+        robot.arm.openBucketPos();
         sleep(1000);
-        //robot.arm.closeBucketPos();
+        robot.arm.closeBucketPos();
         sleep(500);
         robot.arm.moveArmToLevel(0);
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();
-
-        //Move the robot to warehouse for second point
-        driveForwardByInches(2, robot, DejaVuBot.TPS);
-        strafeDirection(robot, false, 920);
-
-        robot.arm.closeBucketPos();
-        //robot.intake();
-        driveForwardByInches(45, robot, DejaVuBot.TPS);
-        strafeDirection(robot, true, 500);
-
-        telemetry.addData("name", "Parked in warehouse");
-        telemetry.update();
+//
+//        //Move the robot to warehouse for second point
+//        driveForwardByInches(2, robot, DejaVuBot.TPS);
+//        strafeDirection(robot, false, 920);
+//
+//        robot.arm.closeBucketPos();
+//        //robot.intake();
+//        driveForwardByInches(45, robot, DejaVuBot.TPS);
+//        strafeDirection(robot, true, 500);
+//
+//        telemetry.addData("name", "Parked in warehouse");
+//        telemetry.update();
         /*
         //Move to 135 degree and drive forward.
         turnToPID(135,robot);
