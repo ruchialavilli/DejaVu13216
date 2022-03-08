@@ -5,7 +5,6 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.BaseAutoOpMode;
 import org.firstinspires.ftc.teamcode.DejaVuArm;
 import org.firstinspires.ftc.teamcode.DejaVuBot;
 
@@ -85,11 +84,13 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
             telemetry.update();
             currentLevel = DejaVuArm.TOP_LEVEL;
         }
+        // TODO delete this
+        sleep(2*1000);
         //46
         driveForwardByInches(38, robot, DejaVuBot.TPS);
         turnToPID(90,robot);
-       telemetry.addLine("Turned 90 degrees to align");
-       //telemetry.update();
+        telemetry.addLine("Turned 90 degrees to align");
+        telemetry.update();
         driveForwardByInches(-2, robot, DejaVuBot.TPS);
 
         robot.arm.moveArmToLevel(currentLevel);

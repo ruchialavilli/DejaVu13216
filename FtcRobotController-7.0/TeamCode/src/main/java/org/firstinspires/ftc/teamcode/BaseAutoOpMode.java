@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -39,18 +37,24 @@ public class BaseAutoOpMode extends LinearOpMode {
             turnToPIDForNegativeAngle(targetAngle);
         }else {
             PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
-            telemetry.setMsTransmissionInterval(50);
+            //telemetry.setMsTransmissionInterval(50);
             // Checking lastSlope to make sure that it's not "oscillating" when it quits
             double absoluteAngle = getAbsoluteAngle();
             telemetry.addData(" turnToPID start abs angle = ", absoluteAngle);
             telemetry.addData(" turnToPID start diff = ", Math.abs(targetAngle - Math.abs(absoluteAngle)));
             telemetry.addData(" turnToPID start slope = ", pid.getLastSlope());
             telemetry.update();
+            // todo NOTE: not sure what the slope value is meant for. Also the absolute angle seems
+            // to be > 90 and  this is the only way we could get it closer to 90 degrees
             while (opModeIsActive()
-                    && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) > allowedAngleDiff
-                        || pid.getLastSlope() > 0.75)) {
-                double motorPower = pid.update(getAbsoluteAngle());
-
+                    && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) < 10
+//                        || pid.getLastSlope() > 0.75
+                        )
+                  ) {
+                absoluteAngle = getAbsoluteAngle();
+                double motorPower = pid.update(absoluteAngle);
+                telemetry.addData("Absolute Angle:", absoluteAngle);
+                telemetry.addData("MotorPower:", motorPower);
                 bot.leftFrontMotor.setPower(-motorPower);
                 bot.leftBackMotor.setPower(-motorPower);
                 bot.rightFrontMotor.setPower(motorPower);
@@ -59,7 +63,6 @@ public class BaseAutoOpMode extends LinearOpMode {
                 telemetry.addData(" turnToPID loop abs angle = ", getAbsoluteAngle());
                 telemetry.addData(" turnToPID angle difference = ", Math.abs(targetAngle - Math.abs(getAbsoluteAngle())));
                 telemetry.addData(" turnToPID slope = ", pid.getLastSlope());
-
                 telemetry.update();
             }
 
