@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 /**
  * This class represents the autonomous run from Red1 position
@@ -27,11 +26,11 @@ public class AutoBlue2OpMode extends BaseAutoOpMode {
         telemetry.addData(name, " Running the opmode ");
         telemetry.update();
 
-        driveForwardByInches(44, robot, DejaVuBot.TPS);
-        turnToPID(-90,robot);
+        driveForwardByInches(44,  DejaVuBot.TPS);
+        turnToPID(-90);
         telemetry.addData(name, "Turned to hub  ");
         telemetry.update();
-        driveForwardByInches(-2, robot, DejaVuBot.TPS);
+        driveForwardByInches(-2,  DejaVuBot.TPS);
         //originally 6 inches
 
         robot.arm.moveArmToLevel(2);
@@ -45,11 +44,11 @@ public class AutoBlue2OpMode extends BaseAutoOpMode {
         telemetry.update();
 
         //Move the robot to warehouse for second point
-        driveForwardByInches(4, robot, DejaVuBot.TPS);
-        strafeDirection(robot, true, 900);
+        driveForwardByInches(4,  DejaVuBot.TPS);
+        strafeDirection(true, 900);
 
-        driveForwardByInches(36, robot, DejaVuBot.TPS);
-        strafeDirection(robot, false, 500);
+        driveForwardByInches(36,  DejaVuBot.TPS);
+        strafeDirection(false, 500);
 
         telemetry.addData(name, "Parked in warehouse");
         telemetry.update();

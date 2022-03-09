@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.DejaVuBot;
 public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
     private String TAG = "AutoRed1VisionOpMode";
     private ElapsedTime runtime = new ElapsedTime();
-    DejaVuBot robot = new DejaVuBot();
 
     @Override
     public void runOpMode() {
@@ -87,18 +86,18 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         // TODO delete this
         sleep(2*1000);
         //46
-        driveForwardByInches(38, robot, DejaVuBot.TPS);
-        turnToPID(90,robot);
+        //driveForwardByInches(38,  DejaVuBot.TPS);
+        turnToPID(90);
         telemetry.addLine("Turned 90 degrees to align");
         telemetry.update();
-        driveForwardByInches(-2, robot, DejaVuBot.TPS);
+        driveForwardByInches(-2,  DejaVuBot.TPS);
 
         robot.arm.moveArmToLevel(currentLevel);
         sleep(500);
         robot.arm.openBucketPos();
         sleep(1000);
         robot.arm.closeBucketPos();
-        sleep(500);
+        sleep(1000);
         robot.arm.moveArmToLevel(0);
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();
