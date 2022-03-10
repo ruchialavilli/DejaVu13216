@@ -32,9 +32,6 @@ package org.firstinspires.ftc.teamcode.vision;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -87,9 +84,9 @@ public class BaseAutoVisionOpMode extends BaseAutoOpMode {
     protected Thread bucketThread;
     protected Thread armThread;
 
-    @Override
-    public void runOpMode() {
-    }
+//    @Override
+//    public void runOpMode() {
+//    }
 
     /**
      * Initialize the Vuforia localization engine.

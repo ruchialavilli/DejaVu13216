@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.DejaVuBot;
 public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
     private String TAG = "AutoRed1VisionOpMode";
     private ElapsedTime runtime = new ElapsedTime();
-
+    private Thread levelFinderThread;
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap, true);
         currentLevel = -1;
         redFlag = true;
@@ -39,55 +39,20 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         telemetry.update();
 
         waitForStart();
-        //driveForwardByInches(4, robot, DejaVuBot.TPS);
-        //Find the level in 10 attempts. If not detected set level to 3.
-        if (opModeIsActive() && tfod != null) {
-            telemetry.addData(">", "Detecting level using vision");
-            telemetry.update();
-            int count = 0;
-            int lastResult = -1;
-            while (opModeIsActive() && count < 3) {
-                lastResult = currentLevel;
-                currentLevel = findLevel();
-                telemetry.addData("Last Level", lastResult);
-                telemetry.addData("Current Level", currentLevel);
-                Log.i(TAG, "Called find level for "
-                        + count+ " detected current level = "
-                        + currentLevel + " (last level=" + lastResult + ")");
-                if(currentLevel != -1){
-                    Log.i(TAG, " Setting Final level ="+ currentLevel);
-                }
-                // go back to last result if current result is not good
-                if(lastResult != -1){
-                    Log.i(TAG, " Setting Final level ="+ lastResult);
-                    currentLevel = lastResult;
-                }
-                count++;
-                Log.i(TAG, " count ="+ count);
-                telemetry.addData("Retry count:", count);
-            }
+        runtime.reset();
 
-            if(currentLevel == DejaVuArm.BOTTOM_LEVEL) {
-                telemetry.addLine(" Current level discovered is Bottom level");
-            } else if(currentLevel == DejaVuArm.TOP_LEVEL) {
-                telemetry.addLine(" Current level discovered is Top level");
-            } else if(currentLevel == DejaVuArm.MID_LEVEL) {
-                telemetry.addLine(" Current level discovered is Mid level");
-            } else {
-                telemetry.addLine(" Current level discovered is UNKNOWN - defaulting to TOP");
-                currentLevel = DejaVuArm.TOP_LEVEL;
-            }
-            telemetry.update();
-        }else{
-            telemetry.addData(">", "Could not init vision code - defaulting to TOP");
-            telemetry.update();
-            currentLevel = DejaVuArm.TOP_LEVEL;
-        }
-        // TODO delete this
-        sleep(2*1000);
+        Log.d(TAG, "starting thread 1");
+        levelFinderThread = new Thread(levelFinderRunnable);
+        levelFinderThread.start();
+
+        // now wait for the threads to finish before returning from this method
+        Log.d(TAG, "waiting for threads to finish...");
+        levelFinderThread.join();
+        Log.d(TAG, "thread joins complete");
         //46
-        //driveForwardByInches(38,  DejaVuBot.TPS);
-        turnToPID(90);
+        driveForwardByInches(38,  DejaVuBot.TPS);
+        turnToPID(270);
+
         telemetry.addLine("Turned 90 degrees to align");
         telemetry.update();
         driveForwardByInches(-2,  DejaVuBot.TPS);
@@ -101,6 +66,8 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         robot.arm.moveArmToLevel(0);
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();
+
+        turnToPID(135);
 //
 //        //Move the robot to warehouse for second point
 //        driveForwardByInches(2, robot, DejaVuBot.TPS);
@@ -159,5 +126,58 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         telemetry.addData(TAG, "Parked in warehouse");
         telemetry.update();
         */
+        // always stop the robot
+        robot.stopRobot();
     }
+
+    private Runnable levelFinderRunnable = new Runnable() {
+        @Override
+        public void run() {
+            //driveForwardByInches(4, robot, DejaVuBot.TPS);
+            //Find the level in 10 attempts. If not detected set level to 3.
+            if (opModeIsActive() && tfod != null) {
+                telemetry.addData(">", "Detecting level using vision");
+                telemetry.update();
+                int count = 0;
+                int lastResult = -1;
+                while (opModeIsActive() && count < 3) {
+                    lastResult = currentLevel;
+                    currentLevel = findLevel();
+                    telemetry.addData("Last Level", lastResult);
+                    telemetry.addData("Current Level", currentLevel);
+                    Log.i(TAG, "Called find level for "
+                            + count+ " detected current level = "
+                            + currentLevel + " (last level=" + lastResult + ")");
+                    if(currentLevel != -1){
+                        Log.i(TAG, " Setting Final level ="+ currentLevel);
+                    }
+                    // go back to last result if current result is not good
+                    if(lastResult != -1){
+                        Log.i(TAG, " Setting Final level ="+ lastResult);
+                        currentLevel = lastResult;
+                    }
+                    count++;
+                    Log.i(TAG, " count ="+ count);
+                    telemetry.addData("Retry count:", count);
+                }
+
+                if(currentLevel == DejaVuArm.BOTTOM_LEVEL) {
+                    telemetry.addLine(" Current level discovered is Bottom level");
+                } else if(currentLevel == DejaVuArm.TOP_LEVEL) {
+                    telemetry.addLine(" Current level discovered is Top level");
+                } else if(currentLevel == DejaVuArm.MID_LEVEL) {
+                    telemetry.addLine(" Current level discovered is Mid level");
+                } else {
+                    telemetry.addLine(" Current level discovered is UNKNOWN - defaulting to TOP");
+                    currentLevel = DejaVuArm.TOP_LEVEL;
+                }
+                telemetry.update();
+            } else{
+                telemetry.addData(">", "Could not init vision code - defaulting to TOP");
+                telemetry.update();
+                currentLevel = DejaVuArm.TOP_LEVEL;
+            }
+            Log.d(TAG, "Thread 1 finishing up");
+        }
+    };
 }
