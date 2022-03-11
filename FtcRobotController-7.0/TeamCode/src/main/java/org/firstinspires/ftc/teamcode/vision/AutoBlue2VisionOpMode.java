@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.DejaVuBot;
 /**
  * This class represents the autonomous run from Red1 position
  */
-@Autonomous(name="AutoRed1VisionOpMode", group="AutoOpModes")
-public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
-    private String TAG = "AutoRed1VisionOpMode";
+@Autonomous(name="AutoBlue2VisionOpMode", group="AutoOpModes")
+public class AutoBlue2VisionOpMode extends BaseAutoVisionOpMode {
+    private String TAG = "AutoBlue2VisionOpMode";
     private ElapsedTime runtime = new ElapsedTime();
     private Thread levelFinderThread;
     @Override
@@ -51,14 +51,14 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         levelFinderThread.join();
         Log.d(TAG, "thread joins complete");
         //46
-        driveForwardByInches(40,  DejaVuBot.TPS);
+        driveForwardByInches(44,  DejaVuBot.TPS);
         turnToPID(-90);
 
 
         telemetry.addLine("Turned 90 degrees to align");
         telemetry.addLine("Moving Arm to level: " + currentLevel);
         telemetry.update();
-        driveForwardByInches(-9,  DejaVuBot.TPS);
+        driveForwardByInches(-2,  DejaVuBot.TPS);
 
         robot.arm.moveArmToLevel(currentLevel);
         sleep(500);
@@ -70,82 +70,16 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();
 
-        driveForwardByInches(74/2, DejaVuBot.TPS);
-        turnToPID(90);
-        turnToPID(90);
-        turnToPID(50);
-        telemetry.addData("AutoRed1VisionOpMode:", " Driving to wall ");
+        //Move the robot to warehouse for second point
+        driveForwardByInches(4,  DejaVuBot.TPS);
+        strafeDirection(true, 900);
+
+        driveForwardByInches(36,  DejaVuBot.TPS);
+        strafeDirection(false, 500);
+
+        telemetry.addData("AutoBlue2VisionOpMode", "Parked in warehouse");
         telemetry.update();
 
-        driveForwardByInches(-31, DejaVuBot.TPS*2);
-        driveForwardByInches(-2, DejaVuBot.TPS/2);
-
-        driveForwardByInches(-3/2, DejaVuBot.TPS/2);
-        spinForOneDuck(true);
-
-        turnToPID(-50);
-
-        driveForwardByInches(15, DejaVuBot.TPS);
-
-//
-//        //Move the robot to warehouse for second point
-//        driveForwardByInches(2, robot, DejaVuBot.TPS);
-//        strafeDirection(robot, false, 920);
-//
-//        robot.arm.closeBucketPos();
-//        //robot.intake();
-//        driveForwardByInches(45, robot, DejaVuBot.TPS);
-//        strafeDirection(robot, true, 500);
-//
-//        telemetry.addData("name", "Parked in warehouse");
-//        telemetry.update();
-        /*
-        //Move to 135 degree and drive forward.
-        turnToPID(135,robot);
-        Log.i(TAG, " Turned to hub ");
-        driveForwardByInches(-24, robot, DejaVuBot.TPS);
-        Log.i(TAG, " drove forward =");
-        //Set to top level if vision did not detect the team element
-        telemetry.addData(TAG, " Vision detected current level = "+ currentLevel);
-        //TODO : WE dont have level 0 bucket drop so set level to top
-        if(currentLevel < DejaVuArm.MID_LEVEL ) {
-            currentLevel = DejaVuArm.TOP_LEVEL;
-            Log.i(TAG, " adjusted the level to top level "+ currentLevel);
-        }
-        telemetry.addData(TAG, " Updated current level set to  "+ currentLevel);
-        robot.arm.moveArmToLevel(currentLevel);
-        Log.i(TAG, " Moved the arm to level  "+ currentLevel);
-        robot.arm.openBucketPos();
-        Log.i(TAG, " Bucket open called ");
-        robot.arm.closeBucketPos();
-        Log.i(TAG, " Bucket closed ");
-        robot.arm.moveArmToLevel(0);
-        Log.i(TAG, " arm moved down ");
-        telemetry.addData(TAG, " Dropped the freight ");
-        telemetry.update();
-
-        //Go to wall
-        turnToPID(-45,robot);
-        Log.i(TAG, " aligning with wall ");
-        strafeDirection(robot, false, 200);
-        Log.i(TAG, " strafing to wall complete ");
-        driveForwardByInches(50, robot, DejaVuBot.TPS);
-        Log.i(TAG, " In warehouse to pickup second block ");
-        robot.intake();
-        sleep(500);
-        robot.stopIntake();
-
-        //TODO - add strafe back to drop the second freight
-        //strafeDirection(robot, false, 200);
-        //strafe45Direction(robot,true,false,50);
-
-        // Step 4:  Stop and close the claw.
-        robot.stopRobot();
-
-        telemetry.addData(TAG, "Parked in warehouse");
-        telemetry.update();
-        */
-        // always stop the robot
         robot.stopRobot();
     }
 
