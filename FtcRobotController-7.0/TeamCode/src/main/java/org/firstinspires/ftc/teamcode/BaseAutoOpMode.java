@@ -21,7 +21,7 @@ public class BaseAutoOpMode extends LinearOpMode {
 
     public double getAbsoluteAngle() {
         return robot.imu.getAngularOrientation(
-                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES
+                AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
         ).firstAngle;
     }
 
@@ -35,29 +35,29 @@ public class BaseAutoOpMode extends LinearOpMode {
         if(targetAngle < 0){
             turnToPIDForNegativeAngle(targetAngle);
         }else {
-            PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
-            //telemetry.setMsTransmissionInterval(50);
+            //PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
+            PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0.0, 0.002);
+            telemetry.setMsTransmissionInterval(50);
             // Checking lastSlope to make sure that it's not "oscillating" when it quits
             double absoluteAngle = getAbsoluteAngle();
             telemetry.addData(" turnToPID start abs angle = ", absoluteAngle);
             telemetry.addData(" turnToPID start diff = ", Math.abs(targetAngle - Math.abs(absoluteAngle)));
             telemetry.addData(" turnToPID start slope = ", pid.getLastSlope());
             telemetry.update();
-            sleep(5*1000);
-            // todo NOTE: not sure what the slope value is meant for. Also the absolute angle seems
-            // to be > 90 and  this is the only way we could get it closer to 90 degrees
+
             while (opModeIsActive()
-                    && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) < 10
-                        || pid.getLastSlope() > 0.75))
+                    && (Math.abs(targetAngle - Math.abs(getAbsoluteAngle())) > allowedAngleDiff
+                        || pid.getLastSlope() > 0.75
+            ))
             {
                 //absoluteAngle = getAbsoluteAngle();
                 double motorPower = pid.update(absoluteAngle);
                 telemetry.addData("Absolute Angle:", absoluteAngle);
                 telemetry.addData("MotorPower:", motorPower);
-                robot.leftFrontMotor.setPower(-motorPower);
-                robot.leftBackMotor.setPower(-motorPower);
-                robot.rightFrontMotor.setPower(motorPower);
-                robot.rightBackMotor.setPower(motorPower);
+                robot.leftFrontMotor.setPower(motorPower);
+                robot.leftBackMotor.setPower(motorPower);
+                robot.rightFrontMotor.setPower(-motorPower);
+                robot.rightBackMotor.setPower(-motorPower);
 
                 telemetry.addData(" turnToPID loop abs angle = ", getAbsoluteAngle());
                 telemetry.addData(" turnToPID angle difference = ", Math.abs(targetAngle -
@@ -70,6 +70,8 @@ public class BaseAutoOpMode extends LinearOpMode {
         }
 
     }
+
+
     public void driveForwardByInches(int distance, double driveVelocity) {
         robot.stopRobot();
         int targetInput = (int) ((48/41)*(distance * DejaVuBot.COUNT_PER_INCH));
@@ -107,7 +109,8 @@ public class BaseAutoOpMode extends LinearOpMode {
     }
 
     public void turnToPIDForNegativeAngle(double targetAngle) {
-        PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
+        //PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
+        PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0.0, 0.002);
         //telemetry.setMsTransmissionInterval(50);
         // Checking lastSlope to make sure that it's not "oscillating" when it quits
         telemetry.addData(" turnToPIDForNegativeAngle s abs angle = ", getAbsoluteAngle());
@@ -115,17 +118,18 @@ public class BaseAutoOpMode extends LinearOpMode {
                 Math.abs(Math.abs(targetAngle) - getAbsoluteAngle()) );
         telemetry.addData("  turnToPIDForNegativeAngle  start slope = ", pid.getLastSlope());
         telemetry.update();
+        //sleep(5*1000);
 
         while (opModeIsActive()
-                && (Math.abs(Math.abs(targetAngle) - getAbsoluteAngle()) > 10
-                //feels like issue is here with the calculation, or something to do with slope
-                || pid.getLastSlope() > 0.75)) {
+                && (Math.abs(Math.abs(targetAngle) - getAbsoluteAngle()) > allowedAngleDiff
+                || pid.getLastSlope() > 0.75
+        )) {
             double motorPower = pid.update(getAbsoluteAngle());
 
-            robot.leftFrontMotor.setPower(motorPower);
-            robot.leftBackMotor.setPower(motorPower);
-            robot.rightFrontMotor.setPower(-motorPower);
-            robot.rightBackMotor.setPower(-motorPower);
+            robot.leftFrontMotor.setPower(-motorPower);
+            robot.leftBackMotor.setPower(-motorPower);
+            robot.rightFrontMotor.setPower(motorPower);
+            robot.rightBackMotor.setPower(motorPower);
 
             telemetry.addData(" turnToPIDForNegativeAngle loop abs angle = ",
                     getAbsoluteAngle());

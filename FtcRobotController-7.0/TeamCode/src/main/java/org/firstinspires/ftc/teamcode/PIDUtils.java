@@ -32,7 +32,7 @@ public class PIDUtils {
         // I
         accumulatedError *= Math.signum(error);
         accumulatedError += error;
-        if (Math.abs(error) < 2) {
+        if (Math.abs(error) < 1) {
             accumulatedError = 0;
         }
 
