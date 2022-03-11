@@ -51,14 +51,14 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         levelFinderThread.join();
         Log.d(TAG, "thread joins complete");
         //46
-        driveForwardByInches(38,  DejaVuBot.TPS);
+        driveForwardByInches(40,  DejaVuBot.TPS);
         turnToPID(-90);
 
 
         telemetry.addLine("Turned 90 degrees to align");
         telemetry.addLine("Moving Arm to level: " + currentLevel);
         telemetry.update();
-       // driveForwardByInches(-2,  DejaVuBot.TPS);
+        driveForwardByInches(-9,  DejaVuBot.TPS);
 
         robot.arm.moveArmToLevel(currentLevel);
         sleep(500);
@@ -69,6 +69,18 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         robot.arm.moveArmToLevel(0);
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();
+
+        driveForwardByInches(74/2, DejaVuBot.TPS);
+        turnToPID(90);
+        turnToPID(90);
+        turnToPID(50);
+        telemetry.addData("AutoRed1VisionOpMode:", " Driving to wall ");
+        telemetry.update();
+
+        driveForwardByInches(-31, DejaVuBot.TPS*2);
+        driveForwardByInches(-2, DejaVuBot.TPS/2);
+        turnToPID(-50);
+
 //
 //        //Move the robot to warehouse for second point
 //        driveForwardByInches(2, robot, DejaVuBot.TPS);

@@ -16,9 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class BaseAutoOpMode extends LinearOpMode {
     private Orientation lastAngles = new Orientation();
     private double currAngle = 0.0;
-    private int allowedAngleDiff = 1;
+    private int allowedAngleDiff = 5;
     protected DejaVuBot robot = new DejaVuBot();
-
     public double getAbsoluteAngle() {
         return robot.imu.getAngularOrientation(
                 AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
@@ -36,7 +35,7 @@ public class BaseAutoOpMode extends LinearOpMode {
             turnToPIDForNegativeAngle(targetAngle);
         }else {
             //PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
-            PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0.0, 0.002);
+            PIDUtils pid = new PIDUtils(targetAngle, 0.0025, 0.0, 0.002);
             telemetry.setMsTransmissionInterval(50);
             // Checking lastSlope to make sure that it's not "oscillating" when it quits
             double absoluteAngle = getAbsoluteAngle();
@@ -110,7 +109,7 @@ public class BaseAutoOpMode extends LinearOpMode {
 
     public void turnToPIDForNegativeAngle(double targetAngle) {
         //PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0, 0.003);
-        PIDUtils pid = new PIDUtils(targetAngle, 0.0015, 0.0, 0.002);
+        PIDUtils pid = new PIDUtils(targetAngle, 0.0025, 0.0, 0.002);
         //telemetry.setMsTransmissionInterval(50);
         // Checking lastSlope to make sure that it's not "oscillating" when it quits
         telemetry.addData(" turnToPIDForNegativeAngle s abs angle = ", getAbsoluteAngle());
@@ -119,6 +118,7 @@ public class BaseAutoOpMode extends LinearOpMode {
         telemetry.addData("  turnToPIDForNegativeAngle  start slope = ", pid.getLastSlope());
         telemetry.update();
         //sleep(5*1000);
+        //changed here >>>>
 
         while (opModeIsActive()
                 && (Math.abs(Math.abs(targetAngle) - getAbsoluteAngle()) > allowedAngleDiff
