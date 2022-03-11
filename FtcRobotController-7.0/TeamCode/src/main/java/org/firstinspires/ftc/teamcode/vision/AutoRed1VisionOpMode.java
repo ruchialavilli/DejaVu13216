@@ -56,6 +56,7 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
 
 
         telemetry.addLine("Turned 90 degrees to align");
+        telemetry.addLine("Moving Arm to level: " + currentLevel);
         telemetry.update();
        // driveForwardByInches(-2,  DejaVuBot.TPS);
 
@@ -64,7 +65,7 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         robot.arm.openBucketPos();
         sleep(1000);
         robot.arm.closeBucketPos();
-        sleep(500);
+        sleep(1000);
         robot.arm.moveArmToLevel(0);
         telemetry.addData("name", " Dropped the freight ");
         telemetry.update();

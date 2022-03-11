@@ -156,7 +156,10 @@ public class BaseAutoVisionOpMode extends BaseAutoOpMode {
                         cubeCount++;
                         float left = recognition.getLeft();
                         if (left < 350f) {
-                            level = DejaVuArm.BOTTOM_LEVEL;
+                            //level = DejaVuArm.BOTTOM_LEVEL;
+                            //Todo: since we do not have a way to drop the cargo in bottom level
+                            // always drop it at the top :-(
+                            level = DejaVuArm.TOP_LEVEL;
                         } else if (left > 550f) {
                             level = DejaVuArm.TOP_LEVEL;
                         } else {
