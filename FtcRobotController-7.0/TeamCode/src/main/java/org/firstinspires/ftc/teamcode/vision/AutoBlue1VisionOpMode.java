@@ -77,15 +77,15 @@ public class AutoBlue1VisionOpMode extends BaseAutoVisionOpMode {
         telemetry.update();
 
         driveForwardByInches(-30, robot, DejaVuBot.TPS*2);
-        driveForwardByInches(-4, robot, DejaVuBot.TPS);
-        turnToPID(-35, robot);
+        driveForwardByInches(-3, robot, DejaVuBot.TPS);
+        turnToPID(-20, robot);
         //driveForwardByInches(-2, robot, DejaVuBot.TPS/2);
 
 
         //f
         driveForwardByInches(-4/2, robot, DejaVuBot.TPS/2);
-        spinForOneDuck(robot, true);
-        turnToPID(35,robot);
+        spinForOneDuck(robot, false);
+        turnToPID(20,robot);
         //changed from 50 -> 60
         //changed from 55->40 2/2/22
 

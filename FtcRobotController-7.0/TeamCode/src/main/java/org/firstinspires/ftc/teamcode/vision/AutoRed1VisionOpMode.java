@@ -71,21 +71,21 @@ public class AutoRed1VisionOpMode extends BaseAutoVisionOpMode {
         telemetry.update();
         //changed from 71 -> 72
         //Move the robot to spin the duck
-        driveForwardByInches(76/2, robot, DejaVuBot.TPS*1.2);
+        driveForwardByInches(72/2, robot, DejaVuBot.TPS*1.2);
         turnToPID(82,robot);
         telemetry.addData(TAG, " Driving to wall ");
         telemetry.update();
 
         driveForwardByInches(-30, robot, DejaVuBot.TPS*2);
-        driveForwardByInches(-4, robot, DejaVuBot.TPS);
-        turnToPID(45, robot);
-        //driveForwardByInches(-2, robot, DejaVuBot.TPS/2);
+
+        turnToPID(20, robot);
+
 
 
         //f
         driveForwardByInches(-3/2, robot, DejaVuBot.TPS/2);
         spinForOneDuck(robot, true);
-        turnToPID(-43,robot);
+        turnToPID(-20,robot);
         //changed from 50 -> 60
         //changed from 55->40 2/2/22
 
